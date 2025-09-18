@@ -1,10 +1,19 @@
 "use client"
 
 import { useState } from "react";
-import { Table, Card, Row, Col, Input, Select, Button, Layout, Menu, Space, Typography, theme } from "antd";
-import { PlusOutlined, ExportOutlined } from "@ant-design/icons";
+import { Table, Row, Col,  Button, Layout, Menu, Space, Typography, theme } from "antd";
+import {  PlusOutlined,
+  TeamOutlined,
+  UserAddOutlined,
+  StopOutlined,
+  UserOutlined,
+  QuestionCircleOutlined,
+  DollarCircleOutlined, AppstoreOutlined, SettingOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import NewSupplierModal from "../components/NewSupplierModal";
+import StatsCard from "../components/Card";
+import SearchFilterBar from "../components/SearchFilter";
+import Link from "next/link";
 import '@ant-design/v5-patch-for-react-19';
 
 const { Header, Sider, Content } = Layout;
@@ -50,6 +59,7 @@ export default function SupplierListPage() {
     const { token } = theme.useToken();
     const [statusFilter, setStatusFilter] = useState("Active");
     const [openModal, setOpenModal] = useState(false);
+  const [layoutType, setLayoutType] = useState<"grid" | "list">("list");
 
 
     const columns: ColumnsType<Supplier> = [
@@ -89,27 +99,79 @@ export default function SupplierListPage() {
         <Layout style={{ minHeight: "100vh" }}>
             {/* Left sidebar */}
             <Sider width={240} style={{ background: "#fff" }}>
-                <div style={{ padding: 16, fontWeight: "bold" }}>ALISA</div>
-                <Menu
-                    mode="inline"
-                    defaultSelectedKeys={["supplier-list"]}
-                    items={[
-                        { key: "dashboard", label: "Dashboard" },
-                        {
-                            key: "supplier",
-                            label: "Supplier Management",
-                            children: [
-                                { key: "supplier-list", label: "Supplier List" },
-                                { key: "review", label: "Review & Approvals" },
-                                { key: "config", label: "Configurations" },
-                            ],
-                        },
-                        { key: "funnel", label: "Funnel Management" },
-                    ]}
-                />
-                <div style={{ position: "absolute", bottom: 20, width: "100%", textAlign: "center" }}>
-                    <p>Help & Support</p>
-                    <p>John Doe</p>
+                <div
+        style={{
+          height: 64,
+          display: "flex",
+          alignItems: "center",
+         
+          fontWeight: "bold",
+          fontSize: 18,
+          borderBottom: "1px solid #e5e5e5",
+        }}
+      >
+        <span>ALISA</span>
+      </div>
+                 <Menu
+        mode="inline"
+        defaultSelectedKeys={["supplier-list"]}
+        defaultOpenKeys={["supplier-management"]}
+        style={{ flex: 1, borderRight: 0 }}
+        items={[
+          {
+            key: "dashboard",
+            icon: <AppstoreOutlined />,
+            label: <Link href="#">Dashboard</Link>,
+          },
+          {
+            key: "supplier-management",
+            icon: <TeamOutlined />,
+            label: "Supplier Management",
+            children: [
+              { key: "supplier-dashboard", label: <Link href="#">Dashboard</Link> },
+              { key: "supplier-list", label: <Link href="#">Supplier List</Link> },
+              { key: "review-approvals", label: <Link href="#">Review & Approvals</Link> },
+              { key: "configurations", label: <Link href="#">Configurations</Link> },
+            ],
+          },
+          {
+            key: "funnel-management",
+            icon: <SettingOutlined />,
+            label: "Funnel Management",
+          },
+        ]}
+      />
+                <div style={{ position: "absolute", bottom: 20, width: "100%", borderTop: "1px solid #e5e5e5", }}>
+                    <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            // justifyContent: "space-between" ? "center" : "space-between",
+            cursor: "pointer",
+          }}
+        >
+            
+          <div style={{ display: "flex", alignItems: "center", gap: 8,  padding: "12px 24px",}}>
+            <QuestionCircleOutlined />
+            <Text strong>Help & Support</Text>
+          </div>
+
+        </div>
+                     <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            // justifyContent: "space-between" ? "center" : "space-between",
+            cursor: "pointer",
+          }}
+        >
+            
+          <div style={{ display: "flex", alignItems: "center", gap: 8,  padding: "12px 24px",}}>
+            <UserOutlined style={{ color: "red" }} />
+            <Text strong>John Doe</Text>
+          </div>
+
+        </div>
                 </div>
             </Sider>
 
@@ -129,45 +191,58 @@ export default function SupplierListPage() {
                     {/* Stats Cards */}
                     <Row gutter={[16, 16]}>
                         <Col xs={24} md={6}>
-                            <Card title="Total Supplier" >
-                                <strong>1,869</strong><br /><small>+8% vs last year</small>
-                            </Card>
+                            <StatsCard
+        title="Total Supplier"
+        value="1,869"
+        trend="+8% vs last year"
+        trendColor="green"
+        icon={<TeamOutlined />}
+      />
                         </Col>
                         <Col xs={24} md={6}>
-                            <Card title="New Supplier" >
-                                <strong>27</strong><br /><small>+1% vs last year</small>
-                            </Card>
+                          <StatsCard
+        title="New Supplier"
+        value="27"
+        trend="+1% vs last year"
+        trendColor="green"
+        icon={<UserAddOutlined  />}
+      />
+                            
                         </Col>
                         <Col xs={24} md={6}>
-                            <Card title="Avg Cost per Supplier">
-                                <strong>Rp 320,3 Mn</strong><br /><small>-1% vs last year</small>
-                            </Card>
+                           
+
+                             <StatsCard
+        title="Avg Cost"
+        value="Rp 320,3 Mn"
+        trend="-1% vs last year"
+        trendColor="red"
+        icon={<DollarCircleOutlined  />}
+      />
                         </Col>
                         <Col xs={24} md={6}>
-                            <Card title="Blocked Supplier" >
-                                <strong>31</strong><br /><small>-4% vs last year</small>
-                            </Card>
+                           
+                            <StatsCard
+        title="Blocked Supplier"
+        value="31"
+        trend="-4% vs last year"
+        trendColor="red"
+        icon={<StopOutlined  />}
+      />
                         </Col>
                     </Row>
 
-                    {/* Search + Filter */}
-                    <Space style={{ margin: "24px 0", width: "100%", justifyContent: "space-between" }} wrap>
-                        <Input.Search placeholder="Search Customer" style={{ width: 300 }} />
-                        <Space>
-                            <Select
-                                value={statusFilter}
-                                onChange={setStatusFilter}
-                                options={[
-                                    { value: "Active", label: "Active" },
-                                    { value: "In Progress", label: "In Progress" },
-                                    { value: "Blocked", label: "Blocked" },
-                                ]}
-                                style={{ width: 150 }}
-                            />
-                            <Button icon={<ExportOutlined />}>Export</Button>
-                        </Space>
-                    </Space>
+                    
 
+                    {/* Search + Filter */}
+                    <SearchFilterBar
+        defaultStatus={statusFilter}
+        onSearch={(val) => console.log("Search:", val)}
+        onStatusChange={(val) => setStatusFilter(val)}
+        onExport={() => console.log("Export triggered")}
+        onLayoutChange={(layout) => setLayoutType(layout)}
+      />
+                   
                     {/* Table */}
 
                     <Table
